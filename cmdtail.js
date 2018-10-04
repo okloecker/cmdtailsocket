@@ -4,6 +4,10 @@ const { spawn } = require('child_process');
 const byline = require('byline');
 const CBuffer = require('CBuffer');
 
+/*
+ * Spawns a Linux command with parameters and captures its output in a ring buffer (CBuffer). Each line captured is also emitted as an Event with the key 'line'.
+ */
+
 class CmdTail extends EventEmitter {
   constructor(opts) {
     super();
@@ -11,15 +15,18 @@ class CmdTail extends EventEmitter {
     this.journal = spawn(opts.command, opts.args, {
       stdio: ['ignore', 'pipe', process.stderr]
     });
+    this.index = 0;
+
     byline(this.journal.stdout).on('data', line => {
       const str = line.toString();
       this._buffer.push(str);
-      this.emit('line', str);
-    }),
-      process.on('exit', () => {
-        console.log(`Killing ${command} `);
-        journal.kill();
-      });
+      this.emit('line', str, this.index++);
+    });
+
+    process.on('exit', () => {
+      console.log(`Killing ${command} `);
+      journal.kill();
+    });
   }
 
   getBuffer() {
