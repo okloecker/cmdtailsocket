@@ -1,30 +1,16 @@
 'use strict';
-const EventEmitter = require('events').EventEmitter;
 const { spawn } = require('child_process');
 const byline = require('byline');
 const CBuffer = require('CBuffer');
 
-class CmdTail extends EventEmitter {
-  constructor(opts) {
-    super();
-    this._buffer = new CBuffer(opts.buflen || 0);
-    this.journal = spawn(opts.command, opts.args, {
-      stdio: ['ignore', 'pipe', process.stderr]
-    });
-    byline(this.journal.stdout).on('data', line => {
-      const str = line.toString();
-      this._buffer.push(str);
-      this.emit('line', str);
-    }),
-      process.on('exit', () => {
-        console.log(`Killing ${command} `);
-        journal.kill();
-      });
-  }
+function cmdtail(opts) {
+  this._buffer = new CBuffer(opts.buflen || 0);
 
-  getBuffer() {
-    return this._buffer.toArray();
-  }
+  console.log('cmdtail', JSON.stringify(opts));
+
+  const journal = spawn(opts.command, opts.args, {
+    stdio: ['ignore', 'pipe', process.stderr]
+  });
 
   /*
   journal.stderr.on('data', data => {
@@ -34,6 +20,18 @@ class CmdTail extends EventEmitter {
     }
   });
   */
+
+  byline(journal.stdout).on('data', line => {
+    const str = line.toString();
+    this._buffer.push(str);
+    opts.eventEmitter.emit('line', str);
+    //console.log('LINE : ', str);
+  });
+
+  process.on('exit', () => {
+    console.log(`Killing ${opts.command} `);
+    journal.kill();
+  });
 }
 
-module.exports = CmdTail;
+module.exports = options => new cmdtail(options);
