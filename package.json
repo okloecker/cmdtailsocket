@@ -7,7 +7,9 @@
     "@rauschma/stringio": "^1.4.0",
     "CBuffer": "^2.0.0",
     "byline": "^5.0.0",
-    "date-fns": "^1.29.0"
+    "date-fns": "^1.29.0",
+    "express": "^4.16.3",
+    "socket.io": "^2.1.1"
   },
   "devDependencies": {},
   "scripts": {

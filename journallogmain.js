@@ -3,7 +3,7 @@ const parse = require('date-fns/parse');
 
 const COMMAND = 'journalctl';
 const BUFLEN = 8;
-const ARGS = [`-n${BUFLEN || 0}`, '-ojson', '-f'];
+const ARGS = [`-n${BUFLEN || 0}`, '-o', 'json', '-f'];
 
 main = () => {
   const journalLogger = new CmdTail({

@@ -18,7 +18,7 @@ class CmdTail extends EventEmitter {
     this.index = 0;
 
     byline(this.journal.stdout).on('data', line => {
-      const str = line.toString();
+      const str = line.toString().trim();
       this._buffer.push(str);
       this.emit('line', str, this.index++);
     });
