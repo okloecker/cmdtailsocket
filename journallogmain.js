@@ -12,16 +12,16 @@ main = () => {
     args: ARGS
   });
 
-  journalLogger.on('line', (line, idx) => {
+  journalLogger.on('line', function(line, idx) {
     const logrec = line.trim();
     const logrecJson = JSON.parse(logrec);
-    const { __REALTIME_TIMESTAMP: timestamp, MESSAGE: msg } = logrecJson;
-    console.log(`LINE[${idx}]`, parse(timestamp / 1000), msg);
-
-    /*
-    const buffer = journalLogger.getBuffer();
-    console.log('lines caputured:', buffer && buffer.length);
-    */
+    const {
+      _SYSTEMD_UNIT: unit,
+      __REALTIME_TIMESTAMP: timestamp,
+      MESSAGE: msg
+    } = logrecJson;
+    console.log(`LINE[${idx}][${unit}]`, parse(timestamp / 1000), msg);
+    console.log(' buffer size:', this.getBuffer().length);
   });
 };
 
